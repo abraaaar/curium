@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vipul</title>
+</head>
+<body style="background-color: aquamarine;">
+    <h1> hello, welcome</h1>
+    <h2>hii </h2>
+    <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Ipsa similique officia consequuntur assumenda nostrum, aliquid autem quis error dolorem ullam consequatur ab tenetur accusamus eligendi sit voluptatum repellat, temporibus adipisci!</p>
+
+    <style>
+        table, th, td {
+            border: 1px solid black;
+          }
+    </style>
+
+    <table>
+        <tr>
+          <th>s no.</th>
+          <th>name</th>
+          <th>age</th>
+          <th>can vote</th>
+        </tr>
+        {%for people in peoples%}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td>{{people.name}}</td>
+          <td>{{people.age}}</td>
+          <td {% if people.age >= 18 %} style="background:green" {% endif %}
+            {% if people.age < 18 %} style="background:red" {% endif %}
+            >
+            {% if people.age >= 18 %}
+            yes
+            {% else %}
+            no
+            {% endif %}
+          </td>
+        </tr>
+        {%endfor%}
+      </table>
+
+</body>
+</html>

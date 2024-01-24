@@ -1,0 +1,241 @@
+<!-- user_details.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        @import url("https://fonts.googleapis.com/css?family=Abel|Abril+Fatface|Alegreya|Arima+Madurai|Dancing+Script|Dosis|Merriweather|Oleo+Script|Overlock|PT+Serif|Pacifico|Playball|Playfair+Display|Share|Unica+One|Vibur");
+
+        * {
+            padding: 0;
+            margin: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-image: linear-gradient(-225deg, #e3fdf5 0%, #ffe6fa 100%);
+            background-image: linear-gradient(to top, #a8edea 0%, #fed6e3 100%);
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+
+            font-family: "Vibur", cursive;
+
+            font-family: "Abel", sans-serif;
+            opacity: 0.95;
+        }
+
+        .form-label {
+            font-weight: 600;
+            font-size: large;
+        }
+
+        nav {
+            background-color: #101010;
+            padding: 15px;
+        }
+
+        nav p {
+            color: #fff;
+            margin: 0;
+            display: inline-block;
+            margin-right: 20px;
+            font-size: 26px;
+        }
+
+        nav a {
+            color: #ef0b0b;
+            font-size: 26px;
+            float: right;
+            text-decoration: none;
+            margin-right: 20px;
+        }
+
+        nav .logo {
+            width: 30px;
+            height: 30px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        .nav-h1 {
+            color: white;
+            font-weight: 400;
+        }
+
+        .nav-h2 {
+            color: white;
+            font-weight: 400;
+        }
+
+        .heh {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 36px;
+            color: #3e403f;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th,
+        td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #f2f2f2;
+        }
+
+        form {
+            width: 350px;
+            height: 150px;
+            border-radius: 5px;
+            margin: 2% auto;
+            box-shadow: 0 9px 50px rgb(244, 143, 118);
+            padding: 2%;
+            background-image: linear-gradient(-225deg, #e3fdf5 50%, #ffe6fa 50%);
+        }
+
+        button {
+            display: inline-block;
+            color: #252537;
+            width: 280px;
+            height: 50px;
+            padding: 0 20px;
+            background: #fff;
+            border-radius: 5px;
+            outline: none;
+            border: none;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s linear;
+            margin: 7% auto;
+            letter-spacing: 0.05em;
+        }
+
+        button:hover {
+            transform: translatey(3px);
+            box-shadow: none;
+            animation: ani9 0.4s ease-in-out infinite alternate;
+        }
+
+        .headerr {
+            padding: 20px;
+            text-align: left;
+            margin-bottom: 30px;
+        }
+
+        .headerr h1 {
+            font-weight: 800;
+            font-size: 30px;
+            color: rgb(20, 69, 61);
+            margin: 0;
+            margin-bottom: 20px;
+        }
+
+        .headerr h2 {
+            font-weight: 200;
+            font-size: 16px;
+            color: rgb(20, 69, 61);
+            margin: 0;
+        }
+
+        .logo {
+            width: 70px;
+            height: 70px;
+            float: left;
+            margin-right: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="headerr">
+        <img
+          class="logo"
+          src="https://media.licdn.com/dms/image/C560BAQExlYi7r4CpWg/company-logo_200_200/0/1663591474302?e=2147483647&v=beta&t=3Mix-eHlRE8yD_x4XNq-B0wGuhSOjtffHssBw5jdvEc"
+          alt="Company Logo"
+        />
+        <h1>Curium Life</h1>
+        <h2>Higher Intelligence Safer Surgery</h2>
+      </div>
+    <nav>
+        
+        {% if user.is_authenticated %}
+            <p>Welcome, {{ user.username }}!</p>
+            <a href="{% url 'logout_page' %}">Logout</a>
+        {% endif %}
+      
+    </nav>
+
+    <!-- <div>
+        <h2 class="heh" >User Details</h2>
+        <table border="2">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Address</th>
+                    <th>Education</th>
+                    <th>Hobbies</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_entry in user_data %}
+                <tr>
+                    <td>{{ user_entry.name }}</td>
+                    <td>{{ user_entry.age }}</td>
+                    <td>{{ user_entry.gender }}</td>
+                    <td>{{ user_entry.address }}</td>
+                    <td>{{ user_entry.education }}</td>
+                    <td>{{ user_entry.hobbies }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table> -->
+
+        <div>
+            <h2>User Details</h2>
+            <table border="1">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Age</th>
+                        <th>Gender</th>
+                        <th>Address</th>
+                        <th>Education</th>
+                        <th>Hobbies</th>
+                        <!-- Add other headers as needed -->
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user_entry in user_data %}
+                        <tr>
+                            <td>{{ user_entry.name }}</td>
+                            <td>{{ user_entry.age }}</td>
+                            <td>{{ user_entry.gender }}</td>
+                            <td>{{ user_entry.address }}</td>
+                            <td>{{ user_entry.education }}</td>
+                            <td>{{ user_entry.hobbies }}</td>
+                            <!-- Add other data cells as needed -->
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+    </div>
+
+    <form method="post" action="{% url 'user_details_view' %}">
+        {% csrf_token %}
+        <button type="submit">Start Again</button>
+    </form>
+
+</body>
+
+</html>
