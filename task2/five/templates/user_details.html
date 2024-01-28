@@ -164,78 +164,63 @@
         />
         <h1>Curium Life</h1>
         <h2>Higher Intelligence Safer Surgery</h2>
-      </div>
+    </div>
     <nav>
-        
         {% if user.is_authenticated %}
             <p>Welcome, {{ user.username }}!</p>
             <a href="{% url 'logout_page' %}">Logout</a>
         {% endif %}
-      
     </nav>
 
-    <!-- <div>
-        <h2 class="heh" >User Details</h2>
-        <table border="2">
+    <div>
+        <h2>User Details</h2>
+        <table border="1">
             <thead>
                 <tr>
                     <th>Name</th>
                     <th>Age</th>
                     <th>Gender</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user_entry in user_details %}
+                    <tr>
+                        <td>{{ user_entry.name }}</td>
+                        <td>{{ user_entry.age }}</td>
+                        <td>{{ user_entry.gender }}</td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div>
+        <h2>User Qualifications</h2>
+        <table border="1">
+            <thead>
+                <tr>
                     <th>Address</th>
                     <th>Education</th>
                     <th>Hobbies</th>
                 </tr>
             </thead>
             <tbody>
-                {% for user_entry in user_data %}
-                <tr>
-                    <td>{{ user_entry.name }}</td>
-                    <td>{{ user_entry.age }}</td>
-                    <td>{{ user_entry.gender }}</td>
-                    <td>{{ user_entry.address }}</td>
-                    <td>{{ user_entry.education }}</td>
-                    <td>{{ user_entry.hobbies }}</td>
-                </tr>
+                {% for user_entry in user_qualifications %}
+                    <tr>
+                        <td>{{ user_entry.address }}</td>
+                        <td>{{ user_entry.education }}</td>
+                        <td>{{ user_entry.hobbies }}</td>
+                    </tr>
                 {% endfor %}
             </tbody>
-        </table> -->
-
-        <div>
-            <h2>User Details</h2>
-            <table border="1">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Age</th>
-                        <th>Gender</th>
-                        <th>Address</th>
-                        <th>Education</th>
-                        <th>Hobbies</th>
-                        <!-- Add other headers as needed -->
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for user_entry in user_data %}
-                        <tr>
-                            <td>{{ user_entry.name }}</td>
-                            <td>{{ user_entry.age }}</td>
-                            <td>{{ user_entry.gender }}</td>
-                            <td>{{ user_entry.address }}</td>
-                            <td>{{ user_entry.education }}</td>
-                            <td>{{ user_entry.hobbies }}</td>
-                            <!-- Add other data cells as needed -->
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+        </table>
     </div>
 
     <form method="post" action="{% url 'user_details_view' %}">
         {% csrf_token %}
         <button type="submit">Start Again</button>
     </form>
-
 </body>
+
 
 </html>
