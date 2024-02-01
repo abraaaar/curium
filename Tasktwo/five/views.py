@@ -16,7 +16,6 @@ def login_page(request):
         if user is not None:
             login(request, user)
             return redirect('user_form_view') 
-        else:
             messages.error(request, "Invalid username or password.")
     
     return render(request, '1login.html')
@@ -55,7 +54,16 @@ def register(request):
 
 def user_form_view(request):
     current_user = request.user
-    if request.method == "POST":
+    if current_user.username == 'user2':
+        name = 'Not Specified'
+        age = 1
+        gender = 'Not Specified'
+        UserDetails.objects.update_or_create(
+            user=current_user,
+            defaults={'name': name, 'age': age, 'gender': gender}
+        )
+        return redirect('address_form_view')
+    elif request.method == "POST":
         name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
         age = request.POST.get('age')
         gender = request.POST.get('gender')
@@ -67,11 +75,9 @@ def user_form_view(request):
 
     return render(request, '2name.html')
 
-
 def address_form_view(request):
     if request.method == "POST":
         address = request.POST.get('address')
-        
         user_details = UserDetails.objects.last()
         user_details.address = address
         user_details.save()
@@ -83,7 +89,6 @@ def address_form_view(request):
 def edu_form_view(request):
     if request.method == "POST":
         education = request.POST.get('education')
-        
         user_qualifications, created = UserQualifications.objects.get_or_create(user_details=UserDetails.objects.last())
         user_qualifications.education = education
         user_qualifications.save()
@@ -96,7 +101,6 @@ def interest_form_view(request):
     current_user = request.user
     if request.method == "POST":
         hobbies = request.POST.get('hobbies')
-
         # Get the latest UserDetails instance for the current user
         user_qualifications = UserQualifications.objects.filter(user_details__user=current_user).last()
         user_qualifications.hobbies = hobbies
