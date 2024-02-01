@@ -54,7 +54,7 @@ def register(request):
 
 def user_form_view(request):
     current_user = request.user
-    if current_user.username == 'user2':
+    if current_user.username == 'user2' or current_user.username == 'user3':
         name = 'Not Specified'
         age = 0
         gender = 'Not Specified'
@@ -73,6 +73,13 @@ def user_form_view(request):
     return render(request, '2name.html')
 
 def address_form_view(request):
+    current_user = request.user
+    if current_user.username == 'user3':
+        address = 'Not Specified'
+        user_details = UserDetails.objects.last()
+        user_details.address = address
+        user_details.save()
+        return redirect('edu_form_view') 
     if request.method == "POST":
         address = request.POST.get('address')
         user_details = UserDetails.objects.last()
