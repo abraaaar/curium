@@ -15,7 +15,7 @@ def login_page(request):
         
         if user is not None:
             login(request, user)
-            return redirect('user_form_view') 
+            return redirect('user_form_view')
             messages.error(request, "Invalid username or password.")
     
     return render(request, '1login.html')
@@ -58,7 +58,7 @@ def user_form_view(request):
         name = 'Not Specified'
         age = 0
         gender = 'Not Specified'
-        user_details = UserDetails.objects.get_or_create(user=current_user, name=name, age=age, gender=gender)
+        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender)
         return redirect('address_form_view')
     elif request.method == "POST":
         name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
