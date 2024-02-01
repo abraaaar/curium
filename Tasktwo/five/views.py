@@ -56,12 +56,9 @@ def user_form_view(request):
     current_user = request.user
     if current_user.username == 'user2':
         name = 'Not Specified'
-        age = 1
+        age = 0
         gender = 'Not Specified'
-        UserDetails.objects.update_or_create(
-            user=current_user,
-            defaults={'name': name, 'age': age, 'gender': gender}
-        )
+        user_details = UserDetails.objects.get_or_create(user=current_user, name=name, age=age, gender=gender)
         return redirect('address_form_view')
     elif request.method == "POST":
         name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
