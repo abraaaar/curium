@@ -9,6 +9,7 @@ class UserDetails(models.Model):
     age = models.IntegerField(blank = True, null=True, default=0)
     gender = models.CharField(max_length=255, null=True, default='Not Specified', blank = True)
     address = models.TextField(blank=True, null=True)
+    step_counter = models.IntegerField(default=0)
 
     def __str__(self):
         return self.name
@@ -17,6 +18,7 @@ class UserQualifications(models.Model):
     user_details = models.OneToOneField(UserDetails, on_delete=models.CASCADE, related_name='qualifications')
     education = models.CharField(max_length=255, blank=True, null=True, default = 'Not Specified')
     hobbies = models.TextField(blank=True, null=True, default = 'Not Specified')
+    step_counter = models.IntegerField(default=0)
 
     def __str__(self):
         return f"Qualifications for {self.user_details.name}"

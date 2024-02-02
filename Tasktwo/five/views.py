@@ -58,7 +58,7 @@ def user_form_view(request):
         name = 'Not Specified'
         age = 0
         gender = 'Not Specified'
-        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender)
+        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1)
         return redirect('address_form_view')
     elif request.method == "POST":
         name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
@@ -66,7 +66,7 @@ def user_form_view(request):
         gender = request.POST.get('gender')
 
         # Create a new UserDetails instance for each submission
-        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender)
+        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1)
 
         return redirect('address_form_view')
 
@@ -78,12 +78,14 @@ def address_form_view(request):
         address = 'Not Specified'
         user_details = UserDetails.objects.last()
         user_details.address = address
+        user_details.step_counter += 1
         user_details.save()
         return redirect('edu_form_view') 
     if request.method == "POST":
         address = request.POST.get('address')
         user_details = UserDetails.objects.last()
         user_details.address = address
+        user_details.step_counter += 1
         user_details.save()
 
         return redirect('edu_form_view')  
@@ -95,8 +97,13 @@ def edu_form_view(request):
         education = request.POST.get('education')
         user_qualifications, created = UserQualifications.objects.get_or_create(user_details=UserDetails.objects.last())
         user_qualifications.education = education
-        user_qualifications.save()
+        
 
+        user_details = UserDetails.objects.last()
+        user_details.step_counter += 1
+        user_details.save()
+        user_qualifications.step_counter = user_details.step_counter
+        user_qualifications.save()
         return redirect('interest_form_view') 
     
     return render(request, '4edu.html')
@@ -108,8 +115,12 @@ def interest_form_view(request):
         # Get the latest UserDetails instance for the current user
         user_qualifications = UserQualifications.objects.filter(user_details__user=current_user).last()
         user_qualifications.hobbies = hobbies
-        user_qualifications.save()
 
+        user_details = UserDetails.objects.last()
+        user_details.step_counter += 1  # Increment step_counter here
+        user_details.save()
+        user_qualifications.step_counter = user_details.step_counter
+        user_qualifications.save()
         return redirect('user_details_view')
 
     return render(request, '5interest.html')
@@ -118,8 +129,12 @@ def user_details_view(request):
     if request.method == "POST":
         # Clearing user profile data
         user_qualifications = UserQualifications.objects.filter(user_details__user=request.user).last()
-        user_qualifications.save()
 
+        user_details = UserDetails.objects.last()
+        user_details.step_counter += 1  # Increment step_counter here
+        user_details.save()
+        user_qualifications.step_counter = user_details.step_counter
+        user_qualifications.save()
         # Redirect to the start of the form
         return redirect('user_form_view')
 
