@@ -42,7 +42,7 @@ WSGI_APPLICATION = 'viptask2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'wow',
+        'NAME': 'test',
         'USER': 'abrar',
         'PASSWORD': 'adminn',
     }

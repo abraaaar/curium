@@ -15,8 +15,18 @@ def login_page(request):
         
         if user is not None:
             login(request, user)
-            return redirect('user_form_view')
-            messages.error(request, "Invalid username or password.")
+            current_user = request.user
+            user_details = UserDetails.objects.filter(user=current_user, status_completed=False).last()
+            if user_details is None:
+                return redirect('user_form_view')
+            else:
+                if user_details.step_counter == 1:
+                    return redirect('address_form_view')
+                elif user_details.step_counter == 2:
+                    return redirect('edu_form_view')
+                elif user_details.step_counter == 3:
+                    return redirect('interest_form_view')
+            messages.error(request, "Invalid username or password.")    
     
     return render(request, '1login.html')
 
