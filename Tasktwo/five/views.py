@@ -58,7 +58,7 @@ def user_form_view(request):
         name = 'Not Specified'
         age = 0
         gender = 'Not Specified'
-        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1)
+        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1,)
         return redirect('address_form_view')
     elif request.method == "POST":
         name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
@@ -118,9 +118,12 @@ def interest_form_view(request):
 
         user_details = UserDetails.objects.last()
         user_details.step_counter += 1  # Increment step_counter here
-        user_details.save()
         user_qualifications.step_counter = user_details.step_counter
+        if user_qualifications.step_counter == 4:
+            user_qualifications.status_completed = True
+            user_details.status_completed = True
         user_qualifications.save()
+        user_details.save()
         return redirect('user_details_view')
 
     return render(request, '5interest.html')
