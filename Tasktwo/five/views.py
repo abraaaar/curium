@@ -129,11 +129,6 @@ def user_details_view(request):
     if request.method == "POST":
         # Clearing user profile data
         user_qualifications = UserQualifications.objects.filter(user_details__user=request.user).last()
-
-        user_details = UserDetails.objects.last()
-        user_details.step_counter += 1  # Increment step_counter here
-        user_details.save()
-        user_qualifications.step_counter = user_details.step_counter
         user_qualifications.save()
         # Redirect to the start of the form
         return redirect('user_form_view')
