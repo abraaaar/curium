@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
-from .models import UserDetails, UserQualifications
+from .models import *
 
 def login_page(request):
     if request.method == "POST":
@@ -16,7 +16,7 @@ def login_page(request):
         if user is not None:
             login(request, user)
             current_user = request.user
-            user_details = UserDetails.objects.filter(user=current_user, status_completed=False).last()
+            user_details = User.objects.filter(user=current_user, status_completed=False).last()
             if user_details is None:
                 return redirect('user_form_view')
             else:
@@ -40,7 +40,9 @@ def register(request):
         last_name = request.POST.get('last_name')
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
+        email = request.POST.get('email')
+        role_name = request.POST.get('org_name')
+
         user = User.objects.filter(username=username)
         
         if user.exists():
@@ -51,9 +53,14 @@ def register(request):
             first_name=first_name,
             last_name=last_name,
             username=username,
+            role_name = role_name,
+            email = email,
         )
         
         user.set_password(password)
+        user.org_name = 'Test Org'
+        user.org_description = 'Test Organision'
+        user.org_address = 'Test Address'   
         user.save()
         messages.success(request, "Account created successfully.")
 
