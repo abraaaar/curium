@@ -11,12 +11,7 @@ urlpatterns = [
     path('', login_page, name='login_page'),
     path('register/', register, name='register'),
     path('logout/', logout_page, name='logout_page'),
-    path('user-form/', user_form_view, name='user_form_view'),
-    path('address-form/', address_form_view, name='address_form_view'),
-    path('edu-form/', edu_form_view, name='edu_form_view'),
-    path('interest-form/', interest_form_view, name='interest_form_view'),
-    path('user-details/', user_details_view, name='user_details_view'),
-
+    path('user-view/', user_view, name='user_view'),
 ]
 
 if settings.DEBUG:

@@ -1,12 +1,11 @@
 from django.db import models
-from django.contrib.postgres.fields import JSONField
 from uuid import uuid4
 
 class User(models.Model):
     user_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
-    fname = models.CharField(max_length=255)
-    lname = models.CharField(max_length=255)
-    email_id = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=255)
+    last_name = models.CharField(max_length=255)
+    email = models.EmailField(unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -33,7 +32,7 @@ class Membership(models.Model):
 class UserCredential(models.Model):
     user_id = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True)
     username = models.CharField(max_length=255)
-    password_hash = models.CharField(max_length=255)
+    password = models.CharField(max_length=255)
 
 class VolumeRecord(models.Model):
     class Status(models.TextChoices):
@@ -50,13 +49,11 @@ class VolumeRecord(models.Model):
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.UPLOADED)
     patient_id = models.CharField(max_length=255)
     study_id = models.CharField(max_length=255)
-    volume_meta = JSONField()
-    report_meta = JSONField()
     isAutomated = models.BooleanField(default=False)
 
-class ReportStage(models.Model):
-    record_id = models.OneToOneField(VolumeRecord, on_delete=models.CASCADE, primary_key=True)
-    updated_by = models.ForeignKey(User, on_delete=models.CASCADE)
+class UserImage(models.Model):
+    image_id = models.UUIDField(primary_key=True, default=uuid4, editable=False)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(upload_to='user_images/')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
-    intermediate_result = JSONField()

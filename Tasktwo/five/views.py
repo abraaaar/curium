@@ -5,34 +5,32 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import *
+from django.core.files.images import ImageFile
+from django.contrib.auth.hashers import make_password
 
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        
         user = authenticate(username=username, password=password)
-        
         if user is not None:
             login(request, user)
             current_user = request.user
-            user_details = User.objects.filter(user=current_user, status_completed=False).last()
-            if user_details is None:
-                return redirect('user_form_view')
-            else:
-                if user_details.step_counter == 1:
-                    return redirect('address_form_view')
-                elif user_details.step_counter == 2:
-                    return redirect('edu_form_view')
-                elif user_details.step_counter == 3:
-                    return redirect('interest_form_view')
-            messages.error(request, "Invalid username or password.")    
-    
-    return render(request, '1login.html')
+            wow = Membership.objects.filter(user=current_user).last()
+            if wow.role_name == 'user':
+                return redirect('users_view')
+            elif wow.role_name == 'surgeon':
+                return redirect('surgeons_view')
+            elif wow.role_name == 'radiologist':
+                return redirect('radiologists_view')
+        messages.error(request, "Invalid username or password.")    
+    return render(request, 'login.html')
+
 
 def logout_page(request):
     logout(request)
     return redirect('login_page')
+
 
 def register(request):
     if request.method == "POST":
@@ -41,121 +39,54 @@ def register(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        role_name = request.POST.get('org_name')
+        role_name = request.POST.get('role_name')
 
-        user = User.objects.filter(username=username)
-        
-        if user.exists():
+        user_credential = UserCredential.objects.filter(username=username)
+        if user_credential.exists():
             messages.error(request, "Username already exists. Please try a different username.")
             return redirect('register')
-
         user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
-            username=username,
-            role_name = role_name,
             email = email,
         )
-        
-        user.set_password(password)
-        user.org_name = 'Test Org'
-        user.org_description = 'Test Organision'
-        user.org_address = 'Test Address'   
         user.save()
-        messages.success(request, "Account created successfully.")
+        hashed_password = make_password(password)
+        cred = UserCredential.objects.create(
+            user_id=user,
+            username=username,
+            password=hashed_password
+        )
+        cred.save()
 
+        orgg = Organization.objects.create(
+            org_owner=user,
+            org_name = 'Test Organisation',
+            org_description = 'Test Description',
+            org_address = 'Test Address'
+        )
+        orgg.save()
+
+        mem = Membership.objects.create(
+            user_id=user,
+            role_name=role_name,
+            org_id=orgg
+        )
+        mem.save()
+
+        messages.success(request, "Account created successfully.")
         return redirect('login_page')
-    
     return render(request, 'register.html')
 
 
-def user_form_view(request):
-    current_user = request.user
-    if current_user.username == 'user2' or current_user.username == 'user3':
-        name = 'Not Specified'
-        age = 0
-        gender = 'Not Specified'
-        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1,)
-        return redirect('address_form_view')
-    elif request.method == "POST":
-        name = request.POST.get('name', 'Default Name')  # Provide a default name if not provided
-        age = request.POST.get('age')
-        gender = request.POST.get('gender')
 
-        # Create a new UserDetails instance for each submission
-        user_details = UserDetails.objects.create(user=current_user, name=name, age=age, gender=gender, step_counter=1)
+def user_view(request):
+    if request.method == 'POST':
+        image_file = request.FILES['image']
+        new_image = UserImage(image=ImageFile(image_file))
+        new_image.user = request.user
+        new_image.save()
+        messages.success(request, "Image uploaded")
+        return redirect('success')
+    return render(request, 'users_page.html')
 
-        return redirect('address_form_view')
-
-    return render(request, '2name.html')
-
-def address_form_view(request):
-    current_user = request.user
-    if current_user.username == 'user3':
-        address = 'Not Specified'
-        user_details = UserDetails.objects.last()
-        user_details.address = address
-        user_details.step_counter += 1
-        user_details.save()
-        return redirect('edu_form_view') 
-    if request.method == "POST":
-        address = request.POST.get('address')
-        user_details = UserDetails.objects.last()
-        user_details.address = address
-        user_details.step_counter += 1
-        user_details.save()
-
-        return redirect('edu_form_view')  
-    
-    return render(request, '3address.html')
-
-def edu_form_view(request):
-    if request.method == "POST":
-        education = request.POST.get('education')
-        user_qualifications, created = UserQualifications.objects.get_or_create(user_details=UserDetails.objects.last())
-        user_qualifications.education = education
-        
-
-        user_details = UserDetails.objects.last()
-        user_details.step_counter += 1
-        user_details.save()
-        user_qualifications.step_counter = user_details.step_counter
-        user_qualifications.save()
-        return redirect('interest_form_view') 
-    
-    return render(request, '4edu.html')
-
-def interest_form_view(request):
-    current_user = request.user
-    if request.method == "POST":
-        hobbies = request.POST.get('hobbies')
-        # Get the latest UserDetails instance for the current user
-        user_qualifications = UserQualifications.objects.filter(user_details__user=current_user).last()
-        user_qualifications.hobbies = hobbies
-
-        user_details = UserDetails.objects.last()
-        user_details.step_counter += 1  # Increment step_counter here
-        user_qualifications.step_counter = user_details.step_counter
-        if user_qualifications.step_counter == 4:
-            user_qualifications.status_completed = True
-            user_details.status_completed = True
-        user_qualifications.save()
-        user_details.save()
-        return redirect('user_details_view')
-
-    return render(request, '5interest.html')
-
-def user_details_view(request):
-    if request.method == "POST":
-        # Clearing user profile data
-        user_qualifications = UserQualifications.objects.filter(user_details__user=request.user).last()
-        user_qualifications.save()
-        # Redirect to the start of the form
-        return redirect('user_form_view')
-
-    # Retrieve all UserQualifications entries for the current user
-    user_data = UserQualifications.objects.filter(user_details__user=request.user)
-
-    # Pass the queryset to the template
-    context = {'user_data': user_data}
-    return render(request, 'user_details.html', context)
