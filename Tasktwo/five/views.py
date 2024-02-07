@@ -1,30 +1,33 @@
 # django_app/views.py
 
-from django.contrib.auth.models import User
+# from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import *
 from django.core.files.images import ImageFile
 from django.contrib.auth.hashers import make_password
+from django.contrib.auth.hashers import check_password
 
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            login(request, user)
-            current_user = request.user
-            wow = Membership.objects.filter(user=current_user).last()
+        user_credential = UserCredential.objects.filter(username=username).first()
+        if user_credential and check_password(password, user_credential.password):
+            user = user_credential.user_id
+            request.session['user_id'] = str(user.user_id)
+            current_user = user
+            wow = Membership.objects.filter(user_id=current_user).last()
             if wow.role_name == 'user':
-                return redirect('users_view')
+                return redirect('user_view')
             elif wow.role_name == 'surgeon':
                 return redirect('surgeons_view')
             elif wow.role_name == 'radiologist':
                 return redirect('radiologists_view')
         messages.error(request, "Invalid username or password.")    
     return render(request, 'login.html')
+
 
 
 def logout_page(request):
@@ -84,9 +87,15 @@ def user_view(request):
     if request.method == 'POST':
         image_file = request.FILES['image']
         new_image = UserImage(image=ImageFile(image_file))
-        new_image.user = request.user
-        new_image.save()
-        messages.success(request, "Image uploaded")
-        return redirect('success')
+        user_id = request.session.get('user_id')
+        if user_id is not None:
+            user = User.objects.get(user_id=user_id)
+            new_image.user = user
+            new_image.save()
+            messages.success(request, "Image uploaded")
+            return redirect('   ')
+        else:
+            messages.error(request, "You must be logged in to upload an image.")
     return render(request, 'users_page.html')
+
 
