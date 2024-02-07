@@ -93,9 +93,10 @@ def user_view(request):
             new_image.user = user
             new_image.save()
             messages.success(request, "Image uploaded")
-            return redirect('   ')
+            return redirect('login_page')
         else:
             messages.error(request, "You must be logged in to upload an image.")
     return render(request, 'users_page.html')
+
 
 
