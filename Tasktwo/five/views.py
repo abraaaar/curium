@@ -1,6 +1,3 @@
-# django_app/views.py
-
-# from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
@@ -97,6 +94,3 @@ def user_view(request):
         else:
             messages.error(request, "You must be logged in to upload an image.")
     return render(request, 'users_page.html')
-
-
-
