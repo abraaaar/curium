@@ -42,9 +42,9 @@ WSGI_APPLICATION = 'viptask2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'taskthree',
-        'USER': 'cur',
-        'PASSWORD': 'cur',
+        'NAME': 'curium',
+        'USER': 'abrar',
+        'PASSWORD': 'adminn',
     }
 }
 AUTH_PASSWORD_VALIDATORS = [
