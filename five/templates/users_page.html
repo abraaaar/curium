@@ -229,8 +229,8 @@
       <h2>Higher Intelligence Safer Surgery</h2>
     </div>
     <nav>
-      {% if user.is_authenticated %}
-      <p>Welcome, {{ user.username }}!</p>
+      {% if username %}
+      <p>Welcome, {{ username }}!</p>
       <a href="{% url 'logout_page' %}">Logout</a>
       {% endif %}
     </nav>

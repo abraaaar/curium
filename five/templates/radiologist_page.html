@@ -143,8 +143,8 @@
         <h2>Higher Intelligence Safer Surgery</h2>
     </div>
     <div class="navbar">
-        {% if request.user.is_authenticated %}
-            <p>Welcome, {{ request.user.username }}!</p>
+        {% if username %}
+            <p>Welcome, {{ username }}!</p>
             <a href="{% url 'logout_page' %}" class="logout-link">Logout</a>
         {% endif %}
     </div>
@@ -158,12 +158,12 @@
                 </tr>
             </thead>
             <tbody>
-                {% for user in users_with_images %}
-                    {% for image in user.images.all %}
+                {% for user in users_with_records %}
+                    {% for record in user.volumerecord_set.all %}
                         <tr>
                             <td>{{ user.first_name }}</td>
                             <td>
-                                <img src="{{ image.image.url }}" alt="User Image">
+                                <img src="{{ record.volume_meta }}" alt="User Image">
                             </td>
                         </tr>
                     {% endfor %}

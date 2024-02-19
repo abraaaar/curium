@@ -104,13 +104,35 @@ def user_view(request):
             return redirect('login_page')
         else:
             messages.error(request, "You must be logged in to upload an image.")
-    return render(request, 'users_page.html')
-
+    else:
+        user_id = request.session.get('user_id')
+        if user_id is not None:
+            user = User.objects.get(user_id=user_id)
+            user_credential = UserCredential.objects.get(user_id=user)
+            context = {
+                'user': user,
+                'username': user_credential.username,
+            }
+            return render(request, 'users_page.html', context)
+    
 
 
 def radiologist_view(request):
-    # Retrieve all users and their images
-    users_with_images = User.objects.filter(images__isnull=False).distinct()
+    # Retrieve all users and their VolumeRecords
+    users_with_records = User.objects.filter(volumerecord__isnull=False).distinct()
 
-    # Render the radiologist_page.html template with the users and their images
-    return render(request, 'radiologist_page.html', {'users_with_images': users_with_images})
+    user_id = request.session.get('user_id')
+    if user_id is not None:
+        user = User.objects.get(user_id=user_id)
+        user_credential = UserCredential.objects.get(user_id=user)
+        context = {
+            'users_with_records': users_with_records,
+            'username': user_credential.username,
+        }
+    else:
+        context = {
+            'users_with_records': users_with_records,
+        }
+
+    # Render the radiologist_page.html template with the users and their VolumeRecords
+    return render(request, 'radiologist_page.html', context)
