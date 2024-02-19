@@ -67,16 +67,8 @@ class VolumeRecord(models.Model):
     patient_id = models.CharField(max_length=255, db_column='patient_id')
     study_id = models.CharField(max_length=255, db_column='study_id')
     isAutomated = models.BooleanField(default=False, db_column='is_automated')
+    volume_meta = models.JSONField(blank=True, null=True)
 
     class Meta:
         db_table = 'app_volume_record'
 
-class UserImage(models.Model):
-    image_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_column='image_id')
-    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='images', db_column='user_id')
-    image = models.ImageField(upload_to='user_images/', db_column='image')
-    created_at = models.DateTimeField(auto_now_add=True, db_column='created_at')
-    updated_at = models.DateTimeField(auto_now=True, db_column='updated_at')
-
-    class Meta:
-        db_table = 'app_user_image'

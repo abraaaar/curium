@@ -5,6 +5,10 @@ from .models import *
 from django.core.files.images import ImageFile
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
+from django.core.files.storage import default_storage
+from django.core.exceptions import ObjectDoesNotExist
+
+
 
 def login_page(request):
     if request.method == "POST":
@@ -32,6 +36,7 @@ def logout_page(request):
     return redirect('login_page')
 
 
+
 def register(request):
     if request.method == "POST":
         first_name = request.POST.get('first_name')
@@ -46,7 +51,6 @@ def register(request):
             messages.error(request, "Username already exists. Please try a different username.")
             return redirect('register')
 
-        # Create the user instance
         user = User.objects.create(
             first_name=first_name,
             last_name=last_name,
@@ -54,7 +58,6 @@ def register(request):
         )
         user.save()
 
-        # Get or create the organization
         org_name = 'Test Organisation'
         orgg, created = Organization.objects.get_or_create(
             org_name=org_name,
@@ -86,22 +89,23 @@ def register(request):
 
 
 
-
-
 def user_view(request):
     if request.method == 'POST':
         image_file = request.FILES['image']
-        new_image = UserImage(image=ImageFile(image_file))
         user_id = request.session.get('user_id')
         if user_id is not None:
             user = User.objects.get(user_id=user_id)
-            new_image.user = user
-            new_image.save()
+            image_name = default_storage.save('user_images/' + image_file.name, image_file)
+            image_url = default_storage.url(image_name)
+            org = Organization.objects.get(org_owner=user)
+            volume_record = VolumeRecord(uploaded_by=user, org_id=org, volume_meta=image_url)
+            volume_record.save()
             messages.success(request, "Image uploaded")
             return redirect('login_page')
         else:
             messages.error(request, "You must be logged in to upload an image.")
     return render(request, 'users_page.html')
+
 
 
 def radiologist_view(request):
