@@ -5,14 +5,36 @@ from django.contrib.auth.hashers import make_password, check_password
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.shortcuts import render, redirect
+from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
 
-class User(models.Model):
+class UserManager(DefaultUserManager):
+    pass
+
+class User(AbstractUser):
     user_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_column='user_id')
-    first_name = models.CharField(max_length=255, db_column='first_name')
-    last_name = models.CharField(max_length=255, db_column='last_name')
-    email = models.EmailField(unique=True, db_column='email')
     created_at = models.DateTimeField(auto_now_add=True, db_column='created_at')
     updated_at = models.DateTimeField(auto_now=True, db_column='updated_at')
+
+    # Use the custom manager
+    objects = UserManager()
+
+    # Add related names to groups and user_permissions
+    groups = models.ManyToManyField(
+        'auth.Group',
+        blank=True,
+        help_text='The groups this user belongs to. A user will get all permissions granted to each of their groups.',
+        related_query_name="user",
+        related_name="%(app_label)s_%(class)s_related",
+        verbose_name='groups'
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        blank=True,
+        help_text='Specific permissions for this user.',
+        related_query_name="user",
+        related_name="%(app_label)s_%(class)s_related",
+        verbose_name='user permissions'
+    )
 
     class Meta:
         db_table = 'app_user'
@@ -42,14 +64,6 @@ class Membership(models.Model):
 
     class Meta:
         db_table = 'app_membership'
-
-class UserCredential(models.Model):
-    user_id = models.OneToOneField(User, on_delete=models.CASCADE, primary_key=True, db_column='user_id')
-    username = models.CharField(max_length=255, db_column='username')
-    password = models.CharField(max_length=255, db_column='password')
-
-    class Meta:
-        db_table = 'app_user_credential'
 
 class VolumeRecord(models.Model):
     class Status(models.TextChoices):

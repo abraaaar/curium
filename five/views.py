@@ -7,16 +7,16 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
 from django.core.exceptions import ObjectDoesNotExist
-
+from django.contrib.auth.models import User
 
 
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
         password = request.POST.get('password')
-        user_credential = UserCredential.objects.filter(username=username).first()
-        if user_credential and check_password(password, user_credential.password):
-            user = user_credential.user_id
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request, user)
             request.session['user_id'] = str(user.user_id)
             current_user = user
             wow = Membership.objects.filter(user_id=current_user).last()
@@ -26,7 +26,8 @@ def login_page(request):
                 return redirect('surgeons_view')
             elif wow.role_name == 'radiologist':
                 return redirect('radiologist_view')
-        messages.error(request, "Invalid username or password.")    
+        else:
+            messages.error(request, "Invalid username or password.")    
     return render(request, 'login.html')
 
 
@@ -39,23 +40,17 @@ def logout_page(request):
 
 def register(request):
     if request.method == "POST":
-        first_name = request.POST.get('first_name')
-        last_name = request.POST.get('last_name')
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
-        role_name = request.POST.get('role_name')
+        first_name = request.POST.get('first_name')
+        last_name = request.POST.get('last_name')
 
-        user_credential = UserCredential.objects.filter(username=username)
-        if user_credential.exists():
+        if User.objects.filter(username=username).exists():
             messages.error(request, "Username already exists. Please try a different username.")
             return redirect('register')
 
-        user = User.objects.create(
-            first_name=first_name,
-            last_name=last_name,
-            email=email,
-        )
+        user = User.objects.create_user(username=username, password=password, email=email, first_name=first_name, last_name=last_name)
         user.save()
 
         org_name = 'Test Organisation'

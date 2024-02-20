@@ -4,6 +4,7 @@ SECRET_KEY = 'django-insecure-%a7j$q+lsv8%7&!h#8*q!hdu4ut3f1*rf=&bmgslok2%64v42h
 DEBUG = True
 TIME_ZONE = 'UTC'
 ALLOWED_HOSTS = []
+AUTH_USER_MODEL = 'five.User'
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -43,7 +44,7 @@ WSGI_APPLICATION = 'viptask2.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'curium',
+        'NAME': 'test',
         'USER': 'abrar',
         'PASSWORD': 'adminn',
     }
