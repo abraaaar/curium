@@ -12,8 +12,8 @@ urlpatterns = [
     path('register/', register, name='register'),
     path('logout/', logout_page, name='logout_page'),
     path('user-view/', user_view, name='user_view'),
-    path('radiologist_view/', radiologist_view, name='radiologist_view'),  # Add this line
-
+    path('radiologist_view/', radiologist_view, name='radiologist_view'),
+    path('surgeon_view/', surgeon_view, name='surgeon_view'),
 ]
 
 if settings.DEBUG:

@@ -23,7 +23,7 @@ def login_page(request):
             if wow.role_name == 'user':
                 return redirect('user_view')
             elif wow.role_name == 'surgeon':
-                return redirect('surgeons_view')
+                return redirect('surgeon_view')
             elif wow.role_name == 'radiologist':
                 return redirect('radiologist_view')
         messages.error(request, "Invalid username or password.")    
@@ -98,7 +98,8 @@ def user_view(request):
             image_name = default_storage.save('user_images/' + image_file.name, image_file)
             image_url = default_storage.url(image_name)
             org = Organization.objects.get(org_owner=user)
-            volume_record = VolumeRecord(uploaded_by=user, org_id=org, volume_meta=image_url)
+            volume_meta_data = {"volume_path": image_url}
+            volume_record = VolumeRecord(uploaded_by=user, org_id=org, volume_meta=volume_meta_data)
             volume_record.save()
             messages.success(request, "Image uploaded")
             return redirect('login_page')
@@ -118,7 +119,6 @@ def user_view(request):
 
 
 def radiologist_view(request):
-    # Retrieve all users and their VolumeRecords
     users_with_records = User.objects.filter(volumerecord__isnull=False).distinct()
 
     user_id = request.session.get('user_id')
@@ -133,6 +133,21 @@ def radiologist_view(request):
         context = {
             'users_with_records': users_with_records,
         }
+    return render(request, 'radiologist_page.html', context)
 
-    # Render the radiologist_page.html template with the users and their VolumeRecords
+def surgeon_view(request):
+    users_with_records = User.objects.filter(volumerecord__status=VolumeRecord.Status.UPLOADED).distinct()
+
+    user_id = request.session.get('user_id')
+    if user_id is not None:
+        user = User.objects.get(user_id=user_id)
+        user_credential = UserCredential.objects.get(user_id=user)
+        context = {
+            'users_with_records': users_with_records,
+            'username': user_credential.username,
+        }
+    else:
+        context = {
+            'users_with_records': users_with_records,
+        }
     return render(request, 'radiologist_page.html', context)

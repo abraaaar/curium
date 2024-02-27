@@ -71,4 +71,3 @@ class VolumeRecord(models.Model):
 
     class Meta:
         db_table = 'app_volume_record'
-
