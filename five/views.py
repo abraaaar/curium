@@ -1,12 +1,10 @@
-from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth import logout
 from django.contrib import messages
 from django.shortcuts import render, redirect
 from .models import *
-from django.core.files.images import ImageFile
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
-from django.core.exceptions import ObjectDoesNotExist
 
 
 
@@ -62,7 +60,7 @@ def register(request):
         orgg, created = Organization.objects.get_or_create(
             org_name=org_name,
             defaults={
-                'org_owner': user,  # Set the actual user who owns the organization
+                'org_owner': user,
                 'org_description': 'Test Description',
                 'org_address': 'Test Address'
             }

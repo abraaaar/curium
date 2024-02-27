@@ -1,10 +1,5 @@
 from django.db import models
 from uuid import uuid4
-from django.core.files.images import ImageFile
-from django.contrib.auth.hashers import make_password, check_password
-from django.contrib import messages
-from django.contrib.auth import logout
-from django.shortcuts import render, redirect
 
 class User(models.Model):
     user_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_column='user_id')
