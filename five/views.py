@@ -43,6 +43,7 @@ def register(request):
         password = request.POST.get('password')
         email = request.POST.get('email')
         role_name = request.POST.get('role_name')
+        org_name = request.POST.get('org_name')
 
         user_credential = UserCredential.objects.filter(username=username)
         if user_credential.exists():
@@ -56,7 +57,6 @@ def register(request):
         )
         user.save()
 
-        org_name = 'Test Organisation'
         orgg, created = Organization.objects.get_or_create(
             org_name=org_name,
             defaults={
