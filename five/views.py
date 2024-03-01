@@ -117,35 +117,35 @@ def user_view(request):
 
 
 def radiologist_view(request):
-    users_with_records = User.objects.filter(volumerecord__isnull=False).distinct()
-
     user_id = request.session.get('user_id')
     if user_id is not None:
         user = User.objects.get(user_id=user_id)
         user_credential = UserCredential.objects.get(user_id=user)
+        user_org = Membership.objects.get(user_id=user).org_id
+        users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__isnull=False).distinct()
         context = {
             'users_with_records': users_with_records,
             'username': user_credential.username,
         }
     else:
         context = {
-            'users_with_records': users_with_records,
+            'users_with_records': [],
         }
     return render(request, 'radiologist_page.html', context)
 
 def surgeon_view(request):
-    users_with_records = User.objects.filter(volumerecord__status=VolumeRecord.Status.UPLOADED).distinct()
-
     user_id = request.session.get('user_id')
     if user_id is not None:
         user = User.objects.get(user_id=user_id)
         user_credential = UserCredential.objects.get(user_id=user)
+        user_org = Membership.objects.get(user_id=user).org_id 
+        users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__status=VolumeRecord.Status.UPLOADED).distinct()
         context = {
             'users_with_records': users_with_records,
             'username': user_credential.username,
         }
     else:
         context = {
-            'users_with_records': users_with_records,
+            'users_with_records': [],
         }
-    return render(request, 'radiologist_page.html', context)
+    return render(request, 'surgeon_page.html', context)
