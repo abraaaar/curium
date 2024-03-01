@@ -5,8 +5,7 @@ from .models import *
 from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
-
-
+from django.views.decorators.csrf import csrf_exempt
 
 def login_page(request):
     if request.method == "POST":
@@ -116,6 +115,7 @@ def user_view(request):
     
 
 
+@csrf_exempt
 def radiologist_view(request):
     user_id = request.session.get('user_id')
     if user_id is not None:
@@ -123,6 +123,13 @@ def radiologist_view(request):
         user_credential = UserCredential.objects.get(user_id=user)
         user_org = Membership.objects.get(user_id=user).org_id
         users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__isnull=False).distinct()
+
+        if request.method == 'POST':
+            record_id = request.POST.get('record_id')
+            record = VolumeRecord.objects.get(record_id=record_id)
+            record.status = VolumeRecord.Status.COMPLETED
+            record.save()
+
         context = {
             'users_with_records': users_with_records,
             'username': user_credential.username,
@@ -139,7 +146,7 @@ def surgeon_view(request):
         user = User.objects.get(user_id=user_id)
         user_credential = UserCredential.objects.get(user_id=user)
         user_org = Membership.objects.get(user_id=user).org_id 
-        users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__status=VolumeRecord.Status.UPLOADED).distinct()
+        users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__status=VolumeRecord.Status.COMPLETED).distinct()
         context = {
             'users_with_records': users_with_records,
             'username': user_credential.username,

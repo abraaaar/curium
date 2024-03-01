@@ -155,6 +155,7 @@
                 <tr>
                     <th>Username</th>
                     <th>Image Uploaded</th>
+                    <th>Status</th> <!-- New column -->
                 </tr>
             </thead>
             <tbody>
@@ -165,12 +166,20 @@
                             <td>
                                 <img src="{{ record.volume_meta.volume_path }}" alt="User Image">
                             </td>
+                            <td>
+                                <form method="post" action="">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="record_id" value="{{ record.record_id }}">
+                                    <input type="submit" value="Completed">
+                                </form>
+                            </td>
                         </tr>
                     {% endfor %}
                 {% endfor %}
             </tbody>
         </table>
     </div>
+    
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
