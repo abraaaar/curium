@@ -6,6 +6,7 @@ from django.contrib.auth.hashers import make_password
 from django.contrib.auth.hashers import check_password
 from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
 
 def login_page(request):
     if request.method == "POST":
@@ -127,8 +128,10 @@ def radiologist_view(request):
         if request.method == 'POST':
             record_id = request.POST.get('record_id')
             record = VolumeRecord.objects.get(record_id=record_id)
-            record.status = VolumeRecord.Status.COMPLETED
-            record.save()
+            if record.status != VolumeRecord.Status.COMPLETED:
+                record.status = VolumeRecord.Status.COMPLETED
+                record.save()
+                return JsonResponse({'status': 'success'})
 
         context = {
             'users_with_records': users_with_records,
@@ -139,6 +142,8 @@ def radiologist_view(request):
             'users_with_records': [],
         }
     return render(request, 'radiologist_page.html', context)
+
+
 
 def surgeon_view(request):
     user_id = request.session.get('user_id')
