@@ -158,8 +158,8 @@
                 </tr>
             </thead>
             <tbody>
-                {% for user in users_with_records %}
-                    {% for record in user.volumerecord_set.all %}
+                {% for user, records in records.items %}
+                    {% for record in records %}
                         <tr>
                             <td>{{ user.first_name }}</td>
                             <td>

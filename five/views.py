@@ -147,12 +147,13 @@ def surgeon_view(request):
         user_credential = UserCredential.objects.get(user_id=user)
         user_org = Membership.objects.get(user_id=user).org_id 
         users_with_records = User.objects.filter(membership__org_id=user_org, volumerecord__status=VolumeRecord.Status.COMPLETED).distinct()
+        records = {user: user.volumerecord_set.filter(status=VolumeRecord.Status.COMPLETED) for user in users_with_records}
         context = {
-            'users_with_records': users_with_records,
+            'records': records,
             'username': user_credential.username,
         }
     else:
         context = {
-            'users_with_records': [],
+            'records': {},
         }
     return render(request, 'surgeon_page.html', context)
