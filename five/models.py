@@ -26,14 +26,15 @@ class Organization(models.Model):
 
 class Membership(models.Model):
     class Role(models.TextChoices):
-        ADMIN = 'ADMIN'
+        USER = 'USER'
         SURGEON = 'SURGEON'
+        RADIOLOGIST = 'RADIOLOGIST'
         TELERADIOLOGIST = 'TELERADIOLOGIST'
 
     membership_id = models.UUIDField(primary_key=True, default=uuid4, editable=False, db_column='membership_id')
     user_id = models.ForeignKey(User, on_delete=models.CASCADE, db_column='user_id')
     org_id = models.ForeignKey(Organization, on_delete=models.CASCADE, db_column='org_id')
-    role_name = models.CharField(max_length=20, choices=Role.choices, default=Role.ADMIN, db_column='role_name')
+    role_name = models.CharField(max_length=20, choices=Role.choices, default=Role.USER, db_column='role_name')
 
     class Meta:
         db_table = 'app_membership'

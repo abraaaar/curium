@@ -24,6 +24,8 @@ def login_page(request):
                 return redirect('surgeon_view')
             elif wow.role_name == 'radiologist':
                 return redirect('radiologist_view')
+            elif wow.role_name == 'teleradiologist':
+                return redirect('teleradiologist_view')
         messages.error(request, "Invalid username or password.")    
     return render(request, 'login.html')
 
@@ -162,3 +164,32 @@ def surgeon_view(request):
             'records': {},
         }
     return render(request, 'surgeon_page.html', context)
+
+@csrf_exempt
+def teleradiologist_view(request):
+    user_id = request.session.get('user_id')
+    if user_id is not None:
+        user = User.objects.get(user_id=user_id)
+        user_credential = UserCredential.objects.get(user_id=user)
+        users_with_records = User.objects.filter(volumerecord__isnull=False).distinct()
+
+        users_with_orgs = {user: user.organization_set.first().org_name for user in users_with_records}
+
+        if request.method == 'POST':
+            record_id = request.POST.get('record_id')
+            record = VolumeRecord.objects.get(record_id=record_id)
+            if record.status != VolumeRecord.Status.COMPLETED:
+                record.status = VolumeRecord.Status.COMPLETED
+                record.save()
+                return JsonResponse({'status': 'success'})
+
+        context = {
+            'users_with_orgs': users_with_orgs,
+            'username': user_credential.username,
+        }
+    else:
+        context = {
+            'users_with_orgs': {},
+        }
+    return render(request, 'teleradiologist_page.html', context)
+

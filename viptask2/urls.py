@@ -13,6 +13,7 @@ urlpatterns = [
     path('user-view/', user_view, name='user_view'),
     path('radiologist_view/', radiologist_view, name='radiologist_view'),
     path('surgeon_view/', surgeon_view, name='surgeon_view'),
+    path('teleradiologist_view/', teleradiologist_view, name='teleradiologist_view'),
 ]
 
 if settings.DEBUG:
