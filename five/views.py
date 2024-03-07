@@ -192,4 +192,3 @@ def teleradiologist_view(request):
             'users_with_orgs': {},
         }
     return render(request, 'teleradiologist_page.html', context)
-
