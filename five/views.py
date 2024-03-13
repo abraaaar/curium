@@ -178,10 +178,9 @@ def teleradiologist_view(request):
         if request.method == 'POST':
             record_id = request.POST.get('record_id')
             record = VolumeRecord.objects.get(record_id=record_id)
-            if record.status != VolumeRecord.Status.COMPLETED:
-                record.status = VolumeRecord.Status.COMPLETED
-                record.save()
-                return JsonResponse({'status': 'success'})
+            record.report_meta['step'] = 1
+            record.save()
+            return redirect(f'/step1/{record_id}')
 
         context = {
             'users_with_orgs': users_with_orgs,
@@ -192,3 +191,28 @@ def teleradiologist_view(request):
             'users_with_orgs': {},
         }
     return render(request, 'teleradiologist_page.html', context)
+
+
+def step1_view(request, record_id):
+    if request.method == 'POST':
+        record = VolumeRecord.objects.get(record_id=record_id)
+        record.report_meta['step'] = 2
+        record.save()
+        return redirect(f'/step2/{record_id}')
+    return render(request, 'step1.html')
+
+def step2_view(request, record_id):
+    if request.method == 'POST':
+        record = VolumeRecord.objects.get(record_id=record_id)
+        record.report_meta['step'] = 3
+        record.save()
+        return redirect(f'/step3/{record_id}')
+    return render(request, 'step2.html')
+
+def step3_view(request, record_id):
+    if request.method == 'POST':
+        record = VolumeRecord.objects.get(record_id=record_id)
+        record.status = VolumeRecord.Status.COMPLETED
+        record.save()
+        return redirect('/login_page')
+    return render(request, 'step3.html')

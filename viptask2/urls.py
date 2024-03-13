@@ -14,6 +14,9 @@ urlpatterns = [
     path('radiologist_view/', radiologist_view, name='radiologist_view'),
     path('surgeon_view/', surgeon_view, name='surgeon_view'),
     path('teleradiologist_view/', teleradiologist_view, name='teleradiologist_view'),
+    path('step1/<uuid:record_id>/', step1_view, name='step1_view'),
+    path('step2/<uuid:record_id>/', step2_view, name='step2_view'),
+    path('step3/<uuid:record_id>/', step3_view, name='step3_view'),
 ]
 
 if settings.DEBUG:

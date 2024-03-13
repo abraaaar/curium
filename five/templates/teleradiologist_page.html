@@ -209,70 +209,64 @@ input:checked + .slider:before {
     </div>
 
     <div class="container">
-      <table>
-          <thead>
-              <tr>
-                  <th>Username</th>
-                  <th>Image Uploaded</th>
-                  <th>Status=Completed</th>
-                  <th>Organization Name</th>
-              </tr>
-          </thead>
-          <tbody>
-              {% for user, org_name in users_with_orgs.items %}
-                  {% for record in user.volumerecord_set.all %}
-                      <tr>
-                          <td>{{ user.first_name }}</td>
-                          <td>
-                              <img src="{{ record.volume_meta.volume_path }}" alt="User Image">
-                          </td>
-                          <td>
-                              <form method="post" action="" class="status-form">
-                                  {% csrf_token %}
-                                  <input type="hidden" name="record_id" value="{{ record.record_id }}">
-                                  <label class="switch">
-                                      <input type="checkbox" {% if record.status == 'COMPLETED' %}checked{% endif %} class="status-checkbox">
-                                      <span class="slider round"></span>
-                                  </label>
-                              </form>
-                          </td>
-                          <td>{{ org_name }}</td>
-                      </tr>
-                  {% endfor %}
-              {% endfor %}
-          </tbody>
-      </table>
-  </div>
-  
+        <table>
+            <thead>
+                <tr>
+                    <th>Username</th>
+                    <th>Image Uploaded</th>
+                    <th>Start Process</th>
+                    <th>Organization Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user, org_name in users_with_orgs.items %}
+                    {% for record in user.volumerecord_set.all %}
+                        <tr>
+                            <td>{{ user.first_name }}</td>
+                            <td>
+                                <img src="{{ record.volume_meta.volume_path }}" alt="User Image">
+                            </td>
+                            <td>
+                                <form method="post" action="" class="status-form">
+                                    {% csrf_token %}
+                                    <input type="hidden" name="record_id" value="{{ record.record_id }}">
+                                    <button type="submit" class="start-button">Start</button>
+                                </form>
+                            </td>
+                            <td>{{ org_name }}</td>
+                        </tr>
+                    {% endfor %}
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    
+    
     
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-<script>
-$(document).ready(function(){
-    $('.status-checkbox').change(function() {
-        if ($(this).is(':checked')) {
-            $(this).closest('.status-form').submit();
-        }
-    });
-
-    $('.status-form').on('submit', function(e) {
-        e.preventDefault();
-        var form = $(this);
-        $.ajax({
-            type: form.attr('method'),
-            url: form.attr('action'),
-            data: form.serialize(),
-            success: function (data) {
-                if (data.status == 'success') {
-                    form.find('.status-checkbox').prop('disabled', true);
-                }
-            }
+    
+    <script>
+        $(document).ready(function(){
+            $('.status-form').on('submit', function(e) {
+                e.preventDefault();
+                var form = $(this);
+                $.ajax({
+                    type: form.attr('method'),
+                    url: form.attr('action'),
+                    data: form.serialize(),
+                    success: function (data) {
+                        if (data.status == 'success') {
+                            window.location.href = "/step1/" + data.record_id;
+                        }
+                    }
+                });
+            });
         });
-    });
-});
-</script>
+        </script>
+      
 </body>
 </html>

@@ -64,6 +64,8 @@ class VolumeRecord(models.Model):
     study_id = models.CharField(max_length=255, db_column='study_id')
     isAutomated = models.BooleanField(default=False, db_column='is_automated')
     volume_meta = models.JSONField(blank=True, null=True)
+    report_meta = models.JSONField(blank=True, null=True, default=dict)
+
 
     class Meta:
         db_table = 'app_volume_record'
