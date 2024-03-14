@@ -208,6 +208,8 @@ input:checked + .slider:before {
         {% endif %}
     </div>
 
+
+    {% block content %}
     <div class="container">
         <table>
             <thead>
@@ -227,12 +229,12 @@ input:checked + .slider:before {
                                 <img src="{{ record.volume_meta.volume_path }}" alt="User Image">
                             </td>
                             <td>
-                                <form method="post" action="" class="status-form">
+                                <form method="post" action="{% url 'start_process' %}" class="status-form">
                                     {% csrf_token %}
                                     <input type="hidden" name="record_id" value="{{ record.record_id }}">
                                     <button type="submit" class="start-button">Start</button>
                                 </form>
-                            </td>
+                            </td> 
                             <td>{{ org_name }}</td>
                         </tr>
                     {% endfor %}
@@ -240,33 +242,8 @@ input:checked + .slider:before {
             </tbody>
         </table>
     </div>
+    {% endblock %}
     
-    
-    
-
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    
-    <script>
-        $(document).ready(function(){
-            $('.status-form').on('submit', function(e) {
-                e.preventDefault();
-                var form = $(this);
-                $.ajax({
-                    type: form.attr('method'),
-                    url: form.attr('action'),
-                    data: form.serialize(),
-                    success: function (data) {
-                        if (data.status == 'success') {
-                            window.location.href = "/step1/" + data.record_id;
-                        }
-                    }
-                });
-            });
-        });
-        </script>
       
 </body>
 </html>

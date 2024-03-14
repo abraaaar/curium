@@ -193,26 +193,51 @@ def teleradiologist_view(request):
     return render(request, 'teleradiologist_page.html', context)
 
 
-def step1_view(request, record_id):
+@csrf_exempt
+def start_process(request):
     if request.method == 'POST':
+        record_id = request.POST.get('record_id')
+        return redirect('step1_view', record_id=record_id)
+    else:
+        # Handle GET requests appropriately
+        pass
+
+from django.shortcuts import render, redirect
+from django.http import HttpResponseNotFound
+from .models import VolumeRecord
+
+def step1_view(request, record_id):
+    try:
         record = VolumeRecord.objects.get(record_id=record_id)
+    except VolumeRecord.DoesNotExist:
+        return HttpResponseNotFound("Record not found")
+
+    if request.method == 'POST':
         record.report_meta['step'] = 2
         record.save()
-        return redirect(f'/step2/{record_id}')
+        return redirect('step2_view', record_id=record_id)
     return render(request, 'step1.html')
 
 def step2_view(request, record_id):
-    if request.method == 'POST':
+    try:
         record = VolumeRecord.objects.get(record_id=record_id)
+    except VolumeRecord.DoesNotExist:
+        return HttpResponseNotFound("Record not found")
+
+    if request.method == 'POST':
         record.report_meta['step'] = 3
         record.save()
-        return redirect(f'/step3/{record_id}')
+        return redirect('step3_view', record_id=record_id)
     return render(request, 'step2.html')
 
 def step3_view(request, record_id):
-    if request.method == 'POST':
+    try:
         record = VolumeRecord.objects.get(record_id=record_id)
+    except VolumeRecord.DoesNotExist:
+        return HttpResponseNotFound("Record not found")
+
+    if request.method == 'POST':
         record.status = VolumeRecord.Status.COMPLETED
         record.save()
-        return redirect('/login_page')
+        return redirect('login_page')
     return render(request, 'step3.html')

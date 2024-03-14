@@ -44,8 +44,8 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CuriumDB',
-        'USER': 'abrar',
-        'PASSWORD': 'adminn',
+        'USER': 'cur',
+        'PASSWORD': 'cur',
     }
 }
 AUTH_PASSWORD_VALIDATORS = [
