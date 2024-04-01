@@ -4,6 +4,7 @@ SECRET_KEY = 'django-insecure-%a7j$q+lsv8%7&!h#8*q!hdu4ut3f1*rf=&bmgslok2%64v42h
 DEBUG = True
 TIME_ZONE = 'UTC'
 ALLOWED_HOSTS = []
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -13,6 +14,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'five'
 ]
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -22,11 +24,13 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+
 ROOT_URLCONF = 'viptask2.urls'
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [BASE_DIR / 'frontend/build'],  # Add this line
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -40,14 +44,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'viptask2.wsgi.application'
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'CuriumDB',
-        'USER': 'cur',
-        'PASSWORD': 'cur',
+        'USER': 'abrar',
+        'PASSWORD': 'adminn',
     }
 }
+
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -62,9 +68,13 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+
 LANGUAGE_CODE = 'en-us'
 TIME_ZONE = 'UTC'
 USE_I18N = True
 USE_TZ = True
-STATIC_URL = 'static/'
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [
+    BASE_DIR / 'frontend/build/static',  # Add this line
+]
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

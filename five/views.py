@@ -8,6 +8,10 @@ from django.core.files.storage import default_storage
 from django.views.decorators.csrf import csrf_exempt
 from django.http import JsonResponse
 
+
+def index(request):
+    return render(request, 'index.html')
+
 def login_page(request):
     if request.method == "POST":
         username = request.POST.get('username')
